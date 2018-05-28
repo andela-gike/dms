@@ -1,0 +1,280 @@
+{
+  "root": true,
+  "extends": [
+      "airbnb",
+      "eslint:recommended",
+      "plugin:import/errors",
+      "plugin:import/warnings"
+  ],
+  "plugins": [
+      "flowtype",
+      "react",
+      "import"
+  ],
+  "env": {
+      "es6": true,
+      "browser": true,
+      "node": true,
+      "jest": true,
+      "commonjs": true
+  },
+  "rules": {
+      "no-console": "warn",
+      "no-debugger": "warn",
+      "no-var": "warn",
+      "semi": [
+          1,
+          "always"
+      ],
+      "no-trailing-spaces": "warn",
+      "eol-last": "warn",
+      "no-alert": "warn",
+      "no-lone-blocks": "warn",
+      "template-curly-spacing": [
+          "error",
+          "always"
+      ],
+      "array-bracket-spacing": [
+          "error",
+          "always"
+      ],
+      "object-curly-spacing": [
+          "error",
+          "always"
+      ],
+      "computed-property-spacing": [
+          "error",
+          "always"
+      ],
+      "no-multiple-empty-lines": [
+          "error",
+          {
+              "max": 1,
+              "maxEOF": 0,
+              "maxBOF": 0
+          }
+      ],
+      "quotes": [
+          "error",
+          "single",
+          "avoid-escape"
+      ],
+      "no-use-before-define": [
+          "error",
+          {
+              "functions": false
+          }
+      ],
+      "prefer-const": "warn",
+      "complexity": [
+          "warn",
+          12
+      ],
+      "id-length": [
+          "warn",
+          {
+              "min": 2,
+              "max": 40,
+              "exceptions": [
+                  "_",
+                  "d"
+              ]
+          }
+      ],
+      "camelcase": "error",
+      "new-cap": "error",
+      "no-underscore-dangle": "error",
+      "jsx-a11y/anchor-is-valid": "off",
+      "jsx-a11y/click-events-have-key-events": "off",
+      "jsx-a11y/label-has-for": "off",
+      "no-mixed-operators": [
+          "warn",
+          {
+              "groups": [
+                  [
+                      "&",
+                      "|",
+                      "^",
+                      "~",
+                      "<<",
+                      ">>",
+                      ">>>"
+                  ],
+                  [
+                      "==",
+                      "!=",
+                      "===",
+                      "!==",
+                      ">",
+                      ">=",
+                      "<",
+                      "<="
+                  ],
+                  [
+                      "&&",
+                      "||"
+                  ],
+                  [
+                      "in",
+                      "instanceof"
+                  ]
+              ],
+              "allowSamePrecedence": false
+          }
+      ],
+      "jsx-quotes": "warn",
+      "import/no-unresolved": "warn",
+      "indent": [
+          "error",
+          2,
+          {
+              "ignoredNodes": [
+                  "ConditionalExpression"
+              ],
+              "flatTernaryExpressions": false,
+              "SwitchCase": 1
+          }
+      ],
+      "react/jsx-indent": [
+          "error",
+          4
+      ],
+      "react/jsx-indent-props": [
+          "error",
+          4
+      ],
+      "react/jsx-curly-spacing": [
+          "error",
+          "always"
+      ],
+      "react/display-name": [
+          "warn",
+          {
+              "ignoreTranspilerName": false
+          }
+      ],
+      "react/forbid-prop-types": [
+          "warn",
+          {
+              "forbid": [
+                  "any"
+              ]
+          }
+      ],
+      "react/jsx-boolean-value": "off",
+      "react/jsx-closing-bracket-location": "off",
+      "react/jsx-filename-extension": [
+          "warn",
+          {
+              "extensions": [
+                  ".js",
+                  ".jsx"
+              ]
+          }
+      ],
+      "react/jsx-key": "warn",
+      "react/jsx-max-props-per-line": "off",
+      "react/jsx-no-bind": "off",
+      "react/jsx-no-duplicate-props": "warn",
+      "react/jsx-no-literals": "off",
+      "react/jsx-no-undef": "warn",
+      "react/jsx-pascal-case": "warn",
+      "react/jsx-sort-prop-types": "off",
+      "react/jsx-sort-props": "off",
+      "react/jsx-uses-react": "warn",
+      "react/jsx-uses-vars": "warn",
+      "react/jsx-wrap-multilines": "warn",
+      "react/no-danger": "warn",
+      "react/no-did-mount-set-state": "warn",
+      "react/no-did-update-set-state": "warn",
+      "react/no-direct-mutation-state": "warn",
+      "react/no-multi-comp": "warn",
+      "react/no-set-state": "off",
+      "react/no-unknown-property": "warn",
+      "react/prefer-es6-class": "warn",
+      "react/prop-types": "warn",
+      "react/react-in-jsx-scope": "warn",
+      "import/extensions": "warn",
+      "import/no-extraneous-dependencies": [
+          "error",
+          {
+              "devDependencies": true
+          }
+      ],
+      "import/prefer-default-export": "off",
+      "react/self-closing-comp": "warn",
+      "react/sort-comp": [
+          "error",
+          {
+              "order": [
+                  "type-annotations",
+                  "static-methods",
+                  "life-cycle",
+                  "everything-else",
+                  "render"
+              ]
+          }
+      ],
+      "react/no-unused-prop-types": "off",
+      "flowtype/boolean-style": [
+          "error",
+          "boolean"
+      ],
+      "flowtype/define-flow-type": "warn",
+      "flowtype/generic-spacing": [
+          "error",
+          "never"
+      ],
+      "flowtype/no-primitive-constructor-types": "error",
+      "flowtype/no-weak-types": [
+          "error",
+          {
+              "any": false,
+              "Object": false,
+              "Function": false
+          }
+      ],
+      "flowtype/object-type-delimiter": [
+          "error",
+          "comma"
+      ],
+      "flowtype/require-valid-file-annotation": "error",
+      "flowtype/semi": [
+          "error",
+          "always"
+      ],
+      "flowtype/space-after-type-colon": [
+          "error",
+          "always"
+      ],
+      "flowtype/space-before-generic-bracket": [
+          "error",
+          "never"
+      ],
+      "flowtype/space-before-type-colon": [
+          "error",
+          "never"
+      ],
+      "flowtype/union-intersection-spacing": [
+          "error",
+          "always"
+      ],
+      "flowtype/use-flow-type": "warn",
+      "flowtype/valid-syntax": "warn"
+  },
+  "settings": {
+      "flowtype": {
+          "onlyFilesWithFlowAnnotation": true
+      },
+      "import/ignore": [
+          "node_modules"
+      ],
+      "import/extensions": [
+          ".js"
+      ],
+      "import/resolver": {
+          "webpack": {}
+      }
+  },
+  "globals": {}
+}
