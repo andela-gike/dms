@@ -9,7 +9,8 @@
   },
   "scripts": {
     "start": "babel-node app.js",
-    "start-dev": "nodemon ./app --exec babel-node"
+    "start-dev": "nodemon ./app --exec babel-node",
+    "test": "NODE_ENV=test"
   },
   "author": "Grace Ike",
   "license": "MIT",
