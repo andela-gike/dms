@@ -10,7 +10,7 @@
   "scripts": {
     "start": "babel-node app.js",
     "start-dev": "nodemon ./app --exec babel-node",
-    "test": "NODE_ENV=test"
+    "test": "NODE_ENV=test && sequelize db:migrate:undo:all && sequelize db:migrate"
   },
   "author": "Grace Ike",
   "license": "MIT",
