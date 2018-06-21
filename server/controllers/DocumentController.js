@@ -1,4 +1,3 @@
-// @flow
 import db from '../models';
 
 const DocumentController = {
