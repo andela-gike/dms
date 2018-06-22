@@ -45,12 +45,14 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     freezeTableName: true
   });
-  Document.associate = function(models) {
+  Document.classMethods = {
+    associate(models) {
     // associations can be defined here
-    Document.belongsTo(models.user, {
-      foreignKey: 'userId',
-      onDelete: 'CASCADE'
-    });
+      Document.belongsTo(models.user, {
+        foreignKey: 'userId',
+        onDelete: 'CASCADE'
+      });
+    }
   };
   return Document;
 };

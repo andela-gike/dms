@@ -45,16 +45,20 @@ module.exports = (sequelize, DataTypes) => {
       field: 'roleId'
     }
   }, {
+  },
+  {
     freezeTableName: true,
   });
-  User.associate = function(models) {
+  User.classMethods = {
+    associate (models) {
     // associations can be defined here
-    User.hasMany(models.documents, { foreignKey: 'userId' });
-    User.belongsTo(models.roles, {
-      foreignKey: 'roleId',
-      onDelete: 'CASCADE'
-    });
-  };
+      User.hasMany(models.documents, { foreignKey: 'userId' });
+      User.belongsTo(models.roles, {
+        foreignKey: 'roleId',
+        onDelete: 'CASCADE'
+      });
+    }
+  }
   User.instanceMethods = {
     generateHashedPassword() {
       this.password = Bcrypt.hashSync(this.password, Bcrypt.genSaltSync(9));

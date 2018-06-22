@@ -18,7 +18,7 @@ const DocumentController = {
         }
       });
     db.Document
-      .create({})
+      .create(request.document)
       .then((document) => {
         response.status(201).send({
           message: 'Document created successfully',
@@ -30,16 +30,51 @@ const DocumentController = {
       });
   },
 
-  readAll() {
+  /**
+   * read all documents
+   * Route: GET: /documents
+   * @param {Object} request request object
+   * @param {Object} response response object
+   *  @returns {void|Response} response object or void
+   */
+  readAll(request, response) {
 
   },
 
+  /**
+   * read a particular document
+   * Route: GET: /documents/:id
+   * @param {Object} request request object
+   * @param {Object} response response object
+   * @returns {void|Response} response object or void
+   */
   readOne() {},
 
+  /**
+   * Update a particular document
+   * Route: PUT: /documents/:id
+   * @param {Object} req request object
+   * @param {Object} res response object
+   * @returns {Response|void} response object or void
+   */
   update() {},
 
+  /**
+   * Delete a particular document
+   * Route: DELETE: /documents/:id
+   * @param {Object} req request object
+   * @param {Object} res response object
+   * @returns {Response|void} response object or void
+   */
   delete() {},
 
+  /**
+   * Search for documents by title
+   * Route: GET: /search/documents?q={title}
+   * @param {Object} req request object
+   * @param {Object} res response object
+   * @returns {void} no returns
+   */
   search() {}
 
 };

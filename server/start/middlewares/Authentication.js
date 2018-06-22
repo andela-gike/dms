@@ -90,11 +90,10 @@ const Authentication = {
         const document = result.dataValues;
         const currentUser = request.decoded.user;
         const userRoleId = currentUser.roleId;
-        if (document.ownerId !== currentUser.id && !helper.isAdmin(userRoleId)) {
+        if (document.userId !== currentUser.id && !helper.isAdmin(userRoleId)) {
           return response.status(500)
             .send(
               {
-                success: false,
                 message: 'You are not allowed to view this documents'
               }
             );
@@ -102,16 +101,15 @@ const Authentication = {
         if (!helper.publicAccess(document) && !helper.roleAccess(document)) {
           return response.status(500)
             .send(
-              { success: false,
+              {
                 message: 'You are not allowed to view this documents'
               });
         }
         if (helper.roleAccess(document)
-        && currentUser.roleId !== document.ownerRoleId) {
+        && currentUser.roleId !== document.userRoleId) {
           return response.status(500)
             .send(
               {
-                success: false,
                 message: 'You are not allowed to view this document'
               }
             );
@@ -267,9 +265,9 @@ const Authentication = {
     request.docInput = {
       title: request.body.title,
       content: request.body.content,
-      ownerId: request.decodedToken.userId,
+      userId: request.decodedToken.userId,
       access: request.body.access,
-      ownerRoleId: request.decodedToken.roleId
+      userRoleId: request.decodedToken.roleId
     };
     next();
   },
@@ -284,7 +282,7 @@ const Authentication = {
   checkDocument(request, response, next) {
     if (isNaN(request.params.id)) {
       return response.status(400).send({
-        message: 'Error occured while retrieving role'
+        message: 'Error occured while retrieving document'
       });
     }
     const access = [ 'public', 'private', 'role' ];
@@ -315,12 +313,102 @@ const Authentication = {
           return response.status(403)
             .send(
               {
-                success: false,
                 message: 'You are not allowed to edit the document id'
               }
             );
         }
         request.doc = doc;
+        next();
+      });
+  },
+
+  /**
+   * checkAccess - checks if a user has the access to view a document
+   * @param  {object} request  request object
+   * @param  {type} response  response object
+   * @param  {type} next callback function
+   * @return {void} no return or void
+   */
+  checkDocumentViewAccess(request, response, next) {
+    if (isNaN(request.params.id)) {
+      return response.status(400).send({
+        message: 'Error occurred while retrieving documents'
+      });
+    }
+    db.Document.findById(request.params.id)
+      .then((result) => {
+        if (!result) {
+          return response.status(404)
+            .send(
+              {
+                message: 'Document Not found'
+              }
+            );
+        }
+        const document = result.dataValues;
+        const currentUser = request.decoded.user;
+        const userRoleId = currentUser.roleId;
+
+        if (document.userId !== currentUser.id && !helper.isAdmin(userRoleId)) {
+          return response.status(500)
+            .send(
+              {
+                message: 'You are not allowed to view this documents'
+              }
+            );
+        }
+        if (!helper.publicAccess(document) && !helper.roleAccess(document)) {
+          return response.status(500)
+            .send(
+              {
+                message: 'You are not allowed to view this documents'
+              });
+        }
+        if (helper.roleAccess(document)
+      && currentUser.roleId !== document.userRoleId) {
+          return response.status(500)
+            .send(
+              {
+                message: 'You are not allowed to view this document'
+              }
+            );
+        }
+        request.document = result;
+        next();
+      });
+  },
+
+  /**
+   * deleteDocument - delete a document
+   * @param  {object} request  request object
+   * @param  {object} response  response object
+   * @param  {type} next callback function
+   * @return {void} no return or void
+   */
+  deleteDocumentAccess(request, response, next) {
+    if (isNaN(request.params.id)) {
+      return response.status(400).send({
+        message: 'Error occured while deleting document'
+      });
+    }
+    db.Document.findById(request.params.id)
+      .then((document) => {
+        if (!document) {
+          return response.status(400)
+            .send(
+              {
+                message: 'Document not found'
+              }
+            );
+        }
+        if (document.userId !== request.decoded.user.id) {
+          return response.status(400)
+            .send(
+              {
+                message: 'You don\'t have permissions to delete this document'
+              });
+        }
+        request.Document = document;
         next();
       });
   }

@@ -21,10 +21,12 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     freezeTableName: true
   });
-  Role.associate = function(models) {
+  Role.classMethods = {
+    associate(models) {
     // associations can be defined here
-    Role.hasMany(models.user, {
-      onDelete: 'CASCADE', foreignKey: 'roleId' });
+      Role.hasMany(models.user, {
+        onDelete: 'CASCADE', foreignKey: 'roleId' });
+    }
   };
   return Role;
 };
