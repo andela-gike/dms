@@ -1,4 +1,5 @@
 import jwt from 'jsonwebtoken';
+// import bcrypt from 'bcrypt';
 import db from '../../models';
 import config from '../../config/config';
 import helper from '../../controllers/helpers';
@@ -88,35 +89,50 @@ const Authentication = {
             );
         }
         const document = result.dataValues;
-        const currentUser = request.decoded.user;
+        const currentUser = request.decodedToken;
         const userRoleId = currentUser.roleId;
-        if (document.userId !== currentUser.id && !helper.isAdmin(userRoleId)) {
-          return response.status(500)
+        if (document.userId !== currentUser.userId && !helper.isAdmin(userRoleId)) {
+          return response.status(401)
             .send(
               {
                 message: 'You are not allowed to view this documents'
               }
             );
         }
-        if (!helper.publicAccess(document) && !helper.roleAccess(document)) {
-          return response.status(500)
+        if (!helper.publicAccess(document) &&
+            !helper.isOwnerDoc(document, currentUser) &&
+            !helper.isAdmin(currentUser.roleId) &&
+            !helper.roleAccess(document, currentUser)) {
+          return response.status(401)
             .send(
               {
                 message: 'You are not allowed to view this documents'
               });
         }
-        if (helper.roleAccess(document)
-        && currentUser.roleId !== document.userRoleId) {
-          return response.status(500)
-            .send(
-              {
-                message: 'You are not allowed to view this document'
-              }
-            );
-        }
         request.document = result;
         next();
       });
+  },
+
+  /**
+   * checkAdmin - checks if a user is an admin
+   * @param  {object} request  request object
+   * @param  {type} response  response object
+   * @param  {function} next callback function
+   * @return {void} no return or void
+   */
+  checkAdmin(request, response, next) {
+    const currentUser = request.decodedToken;
+    if (!helper.isAdmin(currentUser.roleId)) {
+      return response.status(403)
+        .send(
+          {
+            success: false,
+            message: 'Access denied, only Admins are allowed'
+          }
+        );
+    }
+    next();
   },
 
   /**
@@ -175,32 +191,37 @@ const Authentication = {
           message: 'Minimum of 8 characters is allowed for password'
         });
     }
-    db.User.findOne({ where: { email: request.body.email } })
+    db.User.findOne({ where: {
+      userName: request.body.userName,
+      $or: {
+        email: request.body.email
+      }
+    } })
       .then((user) => {
         if (user) {
-          return response.status(409)
-            .send({
-              message: 'email already exists'
-            });
+          if (user.dataValues.username === request.body.userName) {
+            return response.status(409)
+              .send({
+                message: 'username already exists'
+              });
+          }
+          if (user.dataValues.email === request.body.email) {
+            return response.status(409)
+              .send({
+                message: 'username already exists'
+              });
+          }
+        } else {
+          userName = request.body.userName;
+          firstName = request.body.firstName;
+          lastName = request.body.lastName;
+          email = request.body.email;
+          password = request.body.password;
+          const roleId = request.body.roleId || 2;
+          request.userInput =
+          { userName, firstName, lastName, roleId, email, password };
+          next();
         }
-        db.User.findOne({ where: { username: request.body.userName } })
-          .then((newUser) => {
-            if (newUser) {
-              return response.status(409)
-                .send({
-                  message: 'username already exists'
-                });
-            }
-            userName = request.body.userName;
-            firstName = request.body.firstName;
-            lastName = request.body.lastName;
-            email = request.body.email;
-            password = request.body.password;
-            const roleId = request.body.roleId || 2;
-            request.userInput =
-            { userName, firstName, lastName, roleId, email, password };
-            next();
-          });
       });
   },
 
@@ -211,7 +232,7 @@ const Authentication = {
    * @param {Object} next Move to next controller handler
    * @returns {void|Object} response object or void
    * */
-  validateLoginInput (request, response, next) {
+  validateLoginData (request, response, next) {
     if (!request.body.password || !request.body.email) {
       return response.status(400)
         .send({
@@ -229,6 +250,7 @@ const Authentication = {
         });
     }
     next();
+
   },
 
   /**
@@ -323,62 +345,6 @@ const Authentication = {
   },
 
   /**
-   * checkAccess - checks if a user has the access to view a document
-   * @param  {object} request  request object
-   * @param  {type} response  response object
-   * @param  {type} next callback function
-   * @return {void} no return or void
-   */
-  checkDocumentViewAccess(request, response, next) {
-    if (isNaN(request.params.id)) {
-      return response.status(400).send({
-        message: 'Error occurred while retrieving documents'
-      });
-    }
-    db.Document.findById(request.params.id)
-      .then((result) => {
-        if (!result) {
-          return response.status(404)
-            .send(
-              {
-                message: 'Document Not found'
-              }
-            );
-        }
-        const document = result.dataValues;
-        const currentUser = request.decoded.user;
-        const userRoleId = currentUser.roleId;
-
-        if (document.userId !== currentUser.id && !helper.isAdmin(userRoleId)) {
-          return response.status(500)
-            .send(
-              {
-                message: 'You are not allowed to view this documents'
-              }
-            );
-        }
-        if (!helper.publicAccess(document) && !helper.roleAccess(document)) {
-          return response.status(500)
-            .send(
-              {
-                message: 'You are not allowed to view this documents'
-              });
-        }
-        if (helper.roleAccess(document)
-      && currentUser.roleId !== document.userRoleId) {
-          return response.status(500)
-            .send(
-              {
-                message: 'You are not allowed to view this document'
-              }
-            );
-        }
-        request.document = result;
-        next();
-      });
-  },
-
-  /**
    * deleteDocument - delete a document
    * @param  {object} request  request object
    * @param  {object} response  response object
@@ -397,11 +363,11 @@ const Authentication = {
           return response.status(400)
             .send(
               {
-                message: 'Document not found'
+                message: 'Cannot delete a document that does not exist'
               }
             );
         }
-        if (document.userId !== request.decoded.user.id) {
+        if (document.userId !== request.decodedToken.userId) {
           return response.status(400)
             .send(
               {
@@ -411,7 +377,217 @@ const Authentication = {
         request.Document = document;
         next();
       });
-  }
+  },
+
+  /**
+   * Check for role delete permission
+   * @param {Object} request request object
+   * @param {Object} response response object
+   * @param {Object} next Move to next controller handler
+   * @return {Object} response object
+   */
+  checkRolePermission(request, response, next) {
+    if (isNaN(request.params.id)) {
+      return response.status(400).send({
+        message: 'Error occured while retrieving role'
+      });
+    }
+    db.Role.findById(request.params.id)
+      .then((role) => {
+        if (!role) {
+          return response.status(404)
+            .send({
+              message: 'This role does not exist'
+            });
+        }
+        if (helper.isAdmin(role.id) || helper.isRegular(role.id)) {
+          return response.status(403)
+            .send({
+              message: 'You are not permitted to modify this role'
+            });
+        }
+        request.roleInstance = role;
+        next();
+      });
+  },
+
+  /**
+  * Validate user search
+  * @param {Object} request req object
+  * @param {Object} response response object
+  * @param {Object} next Move to next controller handler
+  * @returns {void|Object} response object or void
+  *
+  */
+  validateUserSearch(request, response, next) {
+    // if (!Object.keys(request.query).length || !request.query.q) {
+    //   return response.status(400).send({ message: 'Input a valid search term' });
+    // }
+    const query = helper.getQuery(request, response);
+    const terms = [];
+    const userQuery = request.query.query;
+    const searchArray =
+      userQuery ? userQuery.toLowerCase().match(/\w+/g) : null;
+    if (searchArray) {
+      searchArray.forEach((word) => {
+        terms.push(`%${ word }%`);
+      });
+    }
+    if (`${ request.baseUrl }${ request.route.path }` === '/user/search') {
+      if (!request.query.query) {
+        return response.status(400)
+          .send({
+            message: 'Please enter a search query'
+          });
+      }
+      query.where = {
+        $or: [
+          { userName: { $iLike: { $any: terms } } },
+          { firstName: { $iLike: { $any: terms } } },
+          { lastName: { $iLike: { $any: terms } } },
+          { email: { $iLike: { $any: terms } } }
+        ]
+      };
+    }
+
+    if (`${ request.baseUrl }${ request.route.path }` === '/user') {
+      query.where = helper.isAdmin(request.decodedToken.roleId)
+        ? {}
+        : { id: request.decodedToken.userId };
+      query.attributes = [
+        'id',
+        'userName',
+        'firstName',
+        'lastName',
+        'email',
+        'roleId'
+      ];
+    }
+    request.userFilter = query;
+    next();
+  },
+
+  /**
+  * Validate single user search
+  * @param {Object} request req object
+  * @param {Object} response response object
+  * @param {Object} next Move to next controller handler
+  * @returns {void|Object} response object or void
+  *
+  */
+  validateSingleUserSearch(request, response, next) {
+    if (!helper.isOwner(request) && request.decodedToken.roleId !== 1) {
+      return response.status(403)
+        .send({
+          message: 'Unauthorized Access'
+        });
+    }
+    next();
+  },
+
+  /**
+   * validateUpdate - Validates a User's Profile Updates
+   * @param  {object} request request object
+   * @param  {object} response response object
+   * @param  {function} next callback function
+   * @return  {void} no return or void
+   */
+  validateUpdateUser(request, response, next) {
+    const currentUser = request.decodedToken;
+    const userId = request.params.id;
+    if (isNaN(userId)) {
+      return response.status(400)
+        .send({
+          message: 'An Error occured, please contact admin'
+        });
+    }
+    if (!helper.isAdmin(currentUser.roleId) && userId === 1) {
+      return response.status(403)
+        .send({
+          message: 'You don\'t have permissions to edit an admin details'
+        });
+    }
+    if (!helper.isOwner(request) && currentUser.roleId !== 1) {
+      return response.status(403)
+        .send({
+          message: 'Unauthorized Access'
+        });
+    }
+    if (request.body.id) {
+      return response.status(403)
+        .send({
+          message: 'You are not allowed to edit your id'
+        });
+    }
+    if (request.body.roleId && request.body.roleId === '1') {
+      if (!helper.isAdmin(currentUser.roleId)) {
+        return response.status(403)
+          .send({
+            message: 'You are not allowed to set the roleId'
+          });
+      }
+    }
+    db.User.findById(request.params.id)
+      .then((user) => {
+        if (!user) {
+          return response.status(404)
+            .send({
+              message: `User with id: ${ request.params.id } does not exist`
+            });
+        }
+        request.userInstance = user;
+        next();
+      });
+  },
+
+  /**
+   * Validate user to delete, make sure it not admin user
+   * @param {Object} request req object
+   * @param {Object} response response object
+   * @param {Object} next Move to next controller handler
+   * @returns {void|Object} response object or void
+   *
+   */
+  validateDeleteUser(request, response, next) {
+    const userId = request.params.id;
+    const currentUserId = request.decodedToken.userId;
+    if (isNaN(userId)) {
+      return response.status(400)
+        .send({
+          message: 'An Error Occured while deleting user'
+        });
+    }
+    db.User.findById(userId)
+      .then((user) => {
+        if (user) {
+          if (helper.isAdmin(user.roleId) && user.id === 1) {
+            return response.status(403)
+              .send({
+                message: 'You are not allowed to delete the default Admin'
+              });
+          }
+          if (helper.isAdmin(user.roleId) && user.id === currentUserId) {
+            return response.status(403)
+              .send({
+                success: false,
+                message: 'You are not allowed to delete your own account'
+              });
+          }
+          if (helper.isRegular(user.roleId) && user.id === 2) {
+            return response.status(403)
+              .send({ message: 'You can not delete the default regular user' });
+          }
+          request.userInstance = user;
+          next();
+        } else {
+          return response.status(404)
+            .send({
+              success: false,
+              message: `The user with ${ userId } does not exist`
+            });
+        }
+      });
+  },
 };
 
 export default Authentication;
