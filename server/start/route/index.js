@@ -6,13 +6,15 @@ import endpoint from './endpoints';
 
 // Set up the express app
 const app = express();
-
 // Log requests to the console.
+
+// Parse incoming requests data (https://github.com/expressjs/body-parser)
+app.use(bodyParser.urlencoded({ extended: false }));
+
+app.use(bodyParser.json());
+
 logger.log('dev');
 endpoint(app);
-// Parse incoming requests data (https://github.com/expressjs/body-parser)
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
 
 app.get('*', (req, res) => res.status(200).send({
   message: 'Welcome to the beginning of dms server side.',
