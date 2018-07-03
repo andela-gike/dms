@@ -1,4 +1,5 @@
 import db from '../models';
+import helper from './helpers/index';
 
 const DocumentController = {
   /**
@@ -18,7 +19,7 @@ const DocumentController = {
         }
       });
     db.Document
-      .create(request.document)
+      .create(request.docInput)
       .then((document) => {
         response.status(201).send({
           message: 'Document created successfully',
@@ -38,7 +39,62 @@ const DocumentController = {
    *  @returns {void|Response} response object or void
    */
   readAll(request, response) {
-
+    const userAttribute = {
+      user: helper.getUserAttribute(),
+    };
+    let query;
+    if (request.decodedToken.roleId === 1) {
+      query = { where: {} };
+    } else {
+      query = {
+        where: {
+          access: 'public'
+        }
+      };
+    }
+    query.include = userAttribute.user;
+    query.limit = request.query.limit || 10;
+    query.offset = request.query.offset || 0;
+    query.order = [ [ 'createdAt', 'DESC' ] ];
+    db.User.findById(request.decodedToken.userId)
+      .then((user) => {
+        if (!user) {
+          return response.status(404).send({
+            success: false,
+            message: 'User Not Found'
+          });
+        }
+        db.Document
+          .findAndCountAll(query)
+          .then((documents) => {
+            const condition = {
+              count: documents.count,
+              limit: query.limit,
+              offset: query.offset
+            };
+            delete documents.count;
+            const pagination = helper.pagination(condition);
+            if (request.decodedToken.roleId === 1) {
+              response.status(200)
+                .send({
+                  message: 'You have successfully retrieved all documents',
+                  documents,
+                  pagination
+                });
+            } else {
+              response.status(200)
+                .send({
+                  message: 'You have successfully retrieved all public documents',
+                  documents,
+                  pagination
+                });
+            }
+          })
+          .catch(error => response.status(400).send({
+            error,
+            message: 'Error occurred while retrieving documents'
+          }));
+      });
   },
 
   /**
@@ -48,7 +104,13 @@ const DocumentController = {
    * @param {Object} response response object
    * @returns {void|Response} response object or void
    */
-  readOne() {},
+  readOne(request, response) {
+    response.status(200)
+      .send(
+        {
+          document: request.document
+        });
+  },
 
   /**
    * Update a particular document
@@ -57,7 +119,24 @@ const DocumentController = {
    * @param {Object} res response object
    * @returns {Response|void} response object or void
    */
-  update() {},
+  update(request, response) {
+    if (!request.body.title && !request.body.content) {
+      return response.status(400).send({
+        message: 'No update detected'
+      });
+    }
+    request.doc
+      .update(request.body)
+      .then((data) => {
+        response.status(200)
+          .send(
+            {
+              document: data,
+              message: 'Document updated successfully'
+            }
+          );
+      });
+  },
 
   /**
    * Delete a particular document
@@ -66,7 +145,22 @@ const DocumentController = {
    * @param {Object} res response object
    * @returns {Response|void} response object or void
    */
-  delete() {},
+  delete(request, response) {
+    request.Document
+      .destroy(
+        {
+          where: {
+            id: request.Document.id
+          }
+        })
+      .then(() => response.status(200)
+        .send(
+          {
+            success: true,
+            message: 'Document was deleted successfully'
+          }
+        ));
+  },
 
   /**
    * Search for documents by title
