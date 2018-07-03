@@ -1,13 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
   const Document = sequelize.define('Document', {
-    userId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      validate: {
-        isInt: { msg: 'user ID must be an integer' }
-      },
-      field: 'userId'
-    },
     title: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -29,6 +21,14 @@ module.exports = (sequelize, DataTypes) => {
       },
       field: 'content'
     },
+    userId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      validate: {
+        isInt: { msg: 'user ID must be an integer' }
+      },
+      field: 'userId'
+    },
     access: {
       type: DataTypes.STRING,
       defaultValue: 'public',
@@ -43,16 +43,18 @@ module.exports = (sequelize, DataTypes) => {
       field: 'userRoleId'
     }
   }, {
-    freezeTableName: true
+    freezeTableName: true,
   });
-  Document.classMethods = {
-    associate(models) {
+  Document.associate = function(models) {
     // associations can be defined here
-      Document.belongsTo(models.user, {
-        foreignKey: 'userId',
-        onDelete: 'CASCADE'
-      });
-    }
+    Document.belongsTo(models.User, {
+      foreignKey: {
+        name:  'userId',
+        field: 'userId'
+      },
+      targetKey: 'id',
+      onDelete: 'CASCADE'
+    });
   };
   return Document;
 };

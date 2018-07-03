@@ -43,37 +43,55 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       defaultValue: 2,
       field: 'roleId'
+    },
+    active: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: true,
+      allowNull: false
     }
   }, {
-  },
-  {
+    validate: {
+      validatePassword() {
+        if (this.password.length !== null && (!(/\w+/g.test(this.password))
+          || (this.password.length < 8))) {
+          throw new Error('Minimum of 8 characters is required');
+        }
+      }
+    },
     freezeTableName: true,
+    hooks: {
+      beforeCreate: (user) => {
+        user.password = Bcrypt.hashSync(user.password, Bcrypt.genSaltSync(10));
+      },
+      beforeUpdate: (user) => {
+        if (user.password) {
+          user.password = Bcrypt.hashSync(user.password, Bcrypt.genSaltSync(10));
+        }
+      }
+    }
   });
-  User.classMethods = {
-    associate (models) {
-    // associations can be defined here
-      User.hasMany(models.documents, { foreignKey: 'userId' });
-      User.belongsTo(models.roles, {
-        foreignKey: 'roleId',
-        onDelete: 'CASCADE'
-      });
-    }
-  }
-  User.instanceMethods = {
-    generateHashedPassword() {
-      this.password = Bcrypt.hashSync(this.password, Bcrypt.genSaltSync(9));
-    },
-    validatePassword(password) {
-      return Bcrypt.compareSync(password, this.password);
-    }
+  User.associate = function(models) {
+    User.hasMany(models.Document, {
+      foreignKey: {
+        name:  'userId',
+        field: 'userId'
+      },
+      sourceKey: models.User.id,
+    });
+    User.belongsTo(models.Role, {
+      foreignKey: {
+        name:  'roleId',
+        field: 'roleId'
+      },
+      targetKey: 'id',
+      onDelete: 'CASCADE'
+    });
   };
-  User.hooks = {
-    beforeCreate(user) {
-      user.instanceMethods.generateHashedPassword();
-    },
-    beforeUpdate(user) {
-      user.instanceMethods.generateHashedPassword();
-    }
+
+  User.prototype.validPassword = function (password) {
+    return Bcrypt.compare(password, this.password).then(function(res) {
+      return res;
+    });
   };
   return User;
 };
