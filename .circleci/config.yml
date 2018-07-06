@@ -5,21 +5,19 @@
 version: 2
 jobs:
   build:
-    docker:
-      # specify the version you desire here
-      - image: circleci/node:7.10
-        environment:
-          NODE_ENV: test
-          POSTGRES_DB: dms_test
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: password
+    build:
+      machine: true
 
-      - image: circleci/postgres:9.6.2-alpine
-        environment:
-          POSTGRES_DB: dms_test
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: password
+      environment:
+        NODE_ENV: test
+      node:
+        version: v7.10
+      services:
+        - postgresql
 
+      database:
+        override:
+          - createdb dms_test
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -50,13 +48,7 @@ jobs:
           paths:
             - ./node_modules
 
-      - run:
-        name: Setup PSQL Databases
-        command: |
-          sudo apt install -y postgresql-client
-          createdb dms_test -O postgres
-          # createdb db_special -O user
-      - run tests:
+      run tests:
         name: Run Tests
         command: yarn run test
 
