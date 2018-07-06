@@ -5,19 +5,17 @@
 version: 2
 jobs:
   build:
-    build:
-      machine: true
-
-      environment:
-        NODE_ENV: test
+    machine: true
+    environment:
+      NODE_ENV: test
       node:
         version: v7.10
-      services:
-        - postgresql
+      # services:
+      #   - postgresql
 
-      database:
-        override:
-          - createdb dms_test
+      # database:
+      #   override:
+      #     - createdb dms_test
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -25,6 +23,11 @@ jobs:
       # - image: circleci/mongo:3.4.4
 
     working_directory: ~/repo
+      - image: postgres
+        environment:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: dms_test
 
     steps:
       - checkout
