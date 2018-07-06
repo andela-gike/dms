@@ -8,6 +8,18 @@ jobs:
     docker:
       # specify the version you desire here
       - image: circleci/node:7.10
+        environment:
+          NODE_ENV: test
+          POSTGRES_DB: dms_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+
+      - image: circleci/postgres:9.6.2-alpine
+        environment:
+          POSTGRES_DB: dms_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -18,13 +30,14 @@ jobs:
 
     steps:
       - checkout
-
+      - run:
+          name: upgrade-yarn
+          command: 'sudo yarn upgrade --latest'
       # Download and cache dependencies
       - restore_cache:
-          keys:
+          key:
           - v1-dependencies-{{ checksum "package.json" }}
           # fallback to using the latest cache if no exact match is found
-          - v1-dependencies-
 
       - run:
           name: Install Packages
@@ -34,9 +47,17 @@ jobs:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
+          paths:
+            - ./node_modules
 
-      run tests:
+      - run:
+        name: Setup PSQL Databases
+        command: |
+          sudo apt install -y postgresql-client
+          createdb dms_test -O postgres
+          # createdb db_special -O user
+      - run tests:
         name: Run Tests
-      - run: yarn run test
+        command: yarn run test
 
 
