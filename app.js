@@ -1,20 +1,20 @@
 // @flow
-import express from 'express';
-import logger from 'winston';
-import bodyParser from 'body-parser';
+import dotenv from 'dotenv';
+import { Logger, transports } from 'winston';
+import app from './server/start/route/index';
 
-// Set up the express app
-const app = express();
+dotenv.config({ silent: true });
 
-// Log requests to the console.
-logger.log('dev');
+const port = process.env.PORT || 7000;
 
-// Parse incoming requests data (https://github.com/expressjs/body-parser)
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+const logger = new Logger({
+  transports: [ new transports.Console() ]
+});
 
-app.get('*', (req, res) => res.status(200).send({
-  message: 'Welcome to the beginning of dms.',
-}));
-
-app.listen(7000, () => console.log('app listening on port 7000!'));
+app.listen(port, (error) => {
+  if (!error) {
+    logger.info('App listening on port 7000');
+  } else {
+    logger.error(error);
+  }
+});
