@@ -1,0 +1,15 @@
+sudo: true
+
+language: node_js
+
+node_js: "6"
+
+before_install:
+  - psql -c 'drop database if exists dmstest;' -U postgres
+  - psql -c 'create database dmstest;' -U postgres
+services:
+  - postgresql
+script:
+  - yarn test
+addons:
+  postgresql: "9.3"
