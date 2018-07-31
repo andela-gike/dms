@@ -2,13 +2,14 @@ sudo: true
 
 language: node_js
 
-node_js: "6"
+node_js: "10"
 
 before_install:
+  - curl -o- -L https://yarnpkg.com/install.sh | bash
+  - export PATH="$HOME/.yarn/bin:$PATH"
   - psql -c 'drop database if exists dms_test;' -U postgres
   - psql -c 'create database dms_test;' -U postgres
-after_install:
-  - "sequelize db:migrate:undo:all && sequelize db:migrate"
+
 services:
   - postgresql
 script:
