@@ -7,6 +7,8 @@ node_js: "6"
 before_install:
   - psql -c 'drop database if exists dms_test;' -U postgres
   - psql -c 'create database dms_test;' -U postgres
+after_install:
+  - "sequelize db:migrate:undo:all && sequelize db:migrate"
 services:
   - postgresql
 script:

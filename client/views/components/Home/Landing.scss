@@ -1,1 +1,17 @@
 @import "../../../styles/variables";
+
+.landing-picture {
+  padding: 9% 3% 0 3%;
+  display: inherit;
+}
+
+.landing-text {
+  display: inherit;
+  padding: 8% 3% 0% 2%;
+  position: fixed;
+  left: 60%;
+}
+
+.landing-div {
+  display: inline-flex;
+}
