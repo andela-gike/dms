@@ -1,4 +1,6 @@
+// @flow
 import jwt from 'jsonwebtoken';
+import type { $Request , $Response, NextFunction } from 'express';
 // import bcrypt from 'bcrypt';
 import db from '../../models';
 import config from '../../config/config';
@@ -13,7 +15,7 @@ const Authentication = {
    * @param {Object} next move to next controller handler
    * @returns {void} no returns
    */
-  verifyToken(request, response, next) {
+  verifyToken(request: $Request, response: $Response, next: NextFunction) {
     const token = request.body.token || request.query.token ||
       request.headers.authorization || request.headers[ 'x-access-token' ];
     if (!token) {
@@ -51,7 +53,7 @@ const Authentication = {
    * @param {Object} next move to next controller handler
    * @returns {Object} Object
    */
-  hasAdminPermission(request, response, next){
+  hasAdminPermission(request: $Request, response: $Response, next: NextFunction){
     db.Role
       .findById(request.decodedToken.roleId)
       .then((role) => {
@@ -72,7 +74,7 @@ const Authentication = {
    * @param  {type} next callback function
    * @return {void} no return or void
    */
-  checkDocumentAccess(request, response, next) {
+  checkDocumentAccess(request: $Request, response: $Response, next: NextFunction) {
     if (isNaN(request.params.id)) {
       return response.status(400).send({
         message: 'Error occurred while retrieving documents'
@@ -121,7 +123,7 @@ const Authentication = {
    * @param  {function} next callback function
    * @return {void} no return or void
    */
-  checkAdmin(request, response, next) {
+  checkAdmin(request: $Request, response: $Response, next: NextFunction) {
     const currentUser = request.decodedToken;
     if (!helper.isAdmin(currentUser.roleId)) {
       return response.status(403)
@@ -142,7 +144,7 @@ const Authentication = {
    * @param {Object} next Move to next controller handler
    * @returns {void|Object} response object or void
    * */
-  validateUserInput (request, response, next) {
+  validateUserInput (request: $Request, response: $Response, next: NextFunction) {
     if (request.body.roleId && request.body.roleId === 1) {
       return response.status(403)
         .send({
@@ -232,7 +234,7 @@ const Authentication = {
    * @param {Object} next Move to next controller handler
    * @returns {void|Object} response object or void
    * */
-  validateLoginData (request, response, next) {
+  validateLoginData (request: $Request, response: $Response, next: NextFunction) {
     if (!request.body.password || !request.body.email) {
       return response.status(400)
         .send({
@@ -260,7 +262,7 @@ const Authentication = {
    * @param {Object} next Move to next controller handler
    * @returns {void|Object} response object or void
    * */
-  validateDocumentsInput(request, response, next) {
+  validateDocumentsInput(request: $Request, response: $Response, next: NextFunction) {
     const title = request.body.title;
     const content = request.body.content;
 
@@ -301,7 +303,7 @@ const Authentication = {
    * @param  {function} next callback function
    * @return {void} no return or void
    */
-  checkDocument(request, response, next) {
+  checkDocument(request: $Request, response: $Response, next: NextFunction) {
     if (isNaN(request.params.id)) {
       return response.status(400).send({
         message: 'Error occured while retrieving document'
@@ -351,7 +353,7 @@ const Authentication = {
    * @param  {type} next callback function
    * @return {void} no return or void
    */
-  deleteDocumentAccess(request, response, next) {
+  deleteDocumentAccess(request: $Request, response: $Response, next: NextFunction) {
     if (isNaN(request.params.id)) {
       return response.status(400).send({
         message: 'Error occured while deleting document'
@@ -386,7 +388,7 @@ const Authentication = {
    * @param {Object} next Move to next controller handler
    * @return {Object} response object
    */
-  checkRolePermission(request, response, next) {
+  checkRolePermission(request: $Request, response: $Response, next: NextFunction) {
     if (isNaN(request.params.id)) {
       return response.status(400).send({
         message: 'Error occured while retrieving role'
@@ -419,7 +421,7 @@ const Authentication = {
   * @returns {void|Object} response object or void
   *
   */
-  validateUserSearch(request, response, next) {
+  validateUserSearch(request: $Request, response: $Response, next: NextFunction) {
     // if (!Object.keys(request.query).length || !request.query.q) {
     //   return response.status(400).send({ message: 'Input a valid search term' });
     // }
@@ -475,7 +477,7 @@ const Authentication = {
   * @returns {void|Object} response object or void
   *
   */
-  validateSingleUserSearch(request, response, next) {
+  validateSingleUserSearch(request: $Request, response: $Response, next: NextFunction) {
     if (!helper.isOwner(request) && request.decodedToken.roleId !== 1) {
       return response.status(403)
         .send({
@@ -492,7 +494,7 @@ const Authentication = {
    * @param  {function} next callback function
    * @return  {void} no return or void
    */
-  validateUpdateUser(request, response, next) {
+  validateUpdateUser(request: $Request, response: $Response, next: NextFunction) {
     const currentUser = request.decodedToken;
     const userId = request.params.id;
     if (isNaN(userId)) {
@@ -548,7 +550,7 @@ const Authentication = {
    * @returns {void|Object} response object or void
    *
    */
-  validateDeleteUser(request, response, next) {
+  validateDeleteUser(request: $Request, response: $Response, next: NextFunction) {
     const userId = request.params.id;
     const currentUserId = request.decodedToken.userId;
     if (isNaN(userId)) {

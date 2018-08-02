@@ -8,5 +8,11 @@ flow-typed
 [lints]
 
 [options]
+esproposal.class_static_fields=enable
+esproposal.class_instance_fields=enable
 
 [strict]
+
+[version]
+0.60.1
+

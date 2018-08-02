@@ -1,5 +1,16 @@
 {
   "root": true,
+  "parser": "babel-eslint",
+    "parserOptions": {
+        "ecmaVersion": 6,
+        "sourceType": "module",
+        "ecmaFeatures": {
+            "jsx": true,
+            "modules": true,
+            "generators": true,
+            "experimentalObjectRestSpread": true
+        }
+    },
   "extends": [
       "airbnb",
       "eslint:recommended",
@@ -137,11 +148,11 @@
       ],
       "react/jsx-indent": [
           "error",
-          4
+          2
       ],
       "react/jsx-indent-props": [
           "error",
-          4
+          2
       ],
       "react/jsx-curly-spacing": [
           "error",
