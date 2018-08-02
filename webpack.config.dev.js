@@ -1,7 +1,7 @@
 import path from 'path';
 import webpack from 'webpack';
 
-const devtool = 'cheap-module-source-map' || 'eval-source-map' || 'inline-source-map';
+const devtool = 'source-map' || 'cheap-module-source-map' || 'eval-source-map' || 'inline-source-map';
 export default {
   entry: [ 'babel-polyfill',
     './client/index.js' ],

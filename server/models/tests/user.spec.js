@@ -3,10 +3,10 @@ import model from '../../models';
 import helper from '../../controllers/helpers/modelHelper';
 
 describe('The User Model Test Suite', () => {
-  // const requiredParams = [ 'firstName', 'lastName',
-  //   'userName', 'email',
-  //   'password', 'roleId' ];
-  // const uniqueParams = [ 'userName', 'email' ];
+  const requiredParams = [ 'firstName', 'lastName',
+    'userName', 'email',
+    'password', 'roleId' ];
+  const uniqueParams = [ 'userName', 'email' ];
   const fakeUser = helper.createUser();
 
   let user;
@@ -23,9 +23,9 @@ describe('The User Model Test Suite', () => {
         });
     });
 
-    afterAll(() => model.User.sequelize.sync({ force: true }));
+    afterAll(async() => await model.User.sequelize.sync({ force: true }));
 
-    afterEach(() => model.User.destroy({ where: {} }));
+    afterEach(async () => await model.User.destroy({ where: {} }));
 
     it('should create a new user', () => {
       expect(user).toBeObject;
@@ -51,9 +51,40 @@ describe('The User Model Test Suite', () => {
     it('should ensure that user password is hashed', () => {
       expect(user.password).not.toEqual(fakeUser.password);
     });
+  });
 
-    // it('should not create a user when email is invalid', () => { });
+  describe('The working of the Validation of the User model', () => {
+    requiredParams.forEach((attr) => {
+      it(`fails without ${ attr }`, () => {
+        user[ attr ] = null;
 
+        return user.save()
+          .then(newUser => expect(newUser).toExist)
+          .catch(err =>
+            expect(/notNull/.test(err.message)).toBeTruthy);
+      });
+    });
+
+    uniqueParams.forEach((attr) => {
+      it(`requires ${ attr } field to be Unique`, () =>
+        user.save()
+          .then((newUser) => {
+            fakeUser.roleId = newUser.roleId;
+            return model.User.build(fakeUser).save();
+          })
+          .then(newUser2 => expect(newUser2).toExist)
+          .catch(err =>
+            expect(/UniqueConstraintError/.test(err.name)).toBeTruthy));
+    });
+
+    it('should require an authentic user email', () => {
+      user.email = 'invalid email';
+      user.save()
+        .catch((error) => {
+          expect(/isEmail failed/.test(error.message)).toBeTruthy;
+          expect(/SequelizeValidationError/.test(error.name)).toBeTruthy;
+        });
+    });
   });
 
 });

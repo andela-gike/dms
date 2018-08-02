@@ -1,3 +1,4 @@
+// @flow
 import Authentication from '../middlewares/Authentication';
 import Document from '../../controllers/DocumentController';
 import Role from '../../controllers/RoleController';
