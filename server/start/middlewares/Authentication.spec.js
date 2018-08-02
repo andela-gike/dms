@@ -1,4 +1,5 @@
 // @flow
+/* eslint no-underscore-dangle: 0 */
 import httpMocks from 'node-mocks-http';
 import sinon from 'sinon';
 import events from 'events';
@@ -49,6 +50,59 @@ describe('Middleware Test suite', () => {
       };
       sinon.spy(middlewareStub, 'callback');
       Authentication.verifyToken(request, response, middlewareStub.callback);
+      expect(middlewareStub.callback).toHaveBeenCalled;
+    });
+
+    it('Should prevent access if token is invalid', () => {
+      const response = responseEvent();
+      request = httpMocks.createRequest({
+        method: 'GET',
+        url: '/user',
+        headers: { 'x-access-token': 'Invalid Token' }
+      });
+      const middlewareStub = {
+        callback: () => { }
+      };
+      sinon.spy(middlewareStub, 'callback');
+      Authentication.verifyToken(request, response, middlewareStub.callback);
+      response.on('end', () => {
+        expect(response._getData().message).toEqual('Invalid Token');
+      });
+    });
+  });
+
+  describe('Check Admin Access', () => {
+    it('should restrict if requester is not an admin user', () => {
+      const response = responseEvent();
+      request = httpMocks.createRequest({
+        method: 'GET',
+        url: '/roles',
+        headers: { 'x-access-token': userJwtToken },
+        decodedToken: { roleId: 2 }
+      });
+      const middlewareStub = {
+        callback: () => { }
+      };
+      sinon.spy(middlewareStub, 'callback');
+      Authentication.hasAdminPermission(request, response, middlewareStub.callback);
+      response.on('end', () => {
+        expect(response._getData().message).toEqual('Permission denied, admin only');
+      });
+    });
+
+    it('Should continue for admin user', () => {
+      const response = responseEvent();
+      request = httpMocks.createRequest({
+        method: 'GET',
+        url: '/roles',
+        headers: { 'x-access-token': userJwtToken },
+        decodedToken: { roleId: 1 }
+      });
+      const middlewareStub = {
+        callback: () => { }
+      };
+      sinon.spy(middlewareStub, 'callback');
+      Authentication.hasAdminPermission(request, response, middlewareStub.callback);
       expect(middlewareStub.callback).toHaveBeenCalled;
     });
   });
