@@ -15,4 +15,4 @@ services:
 script:
   - yarn test
 addons:
-  postgresql: "9.3"
+  postgresql: "10.1"

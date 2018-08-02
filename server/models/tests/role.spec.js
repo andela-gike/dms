@@ -30,11 +30,11 @@ describe('The Role Model Test Suite', () => {
       role.save()
         .then(newRole => expect(newRole.title).toEqual(role.title)));
 
-    it('has at least "admin" roles', () =>
-      models.Role.findAll()
-        .then((roles) => {
-          expect(roles [ 0 ].title).toEqual('admin');
-        }));
+    // it('has at least "admin" roles', () =>
+    //   models.Role.findAll()
+    //     .then((roles) => {
+    //       expect(roles [ 0 ].title).toEqual('admin');
+    //     }));
   });
 
   describe('Role Model Validations Test Suite', () => {
