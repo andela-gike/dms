@@ -1,7 +1,15 @@
+// @flow
 import React from 'react';
 import { render } from 'react-dom';
-import { BrowserRouter as Router } from 'react-router-dom';
-import Route from './routes';
+import { ConnectedRouter } from 'connected-react-router';
+import { Provider } from 'react-redux';
+import App from './views/components/containers/App';
+import { store, syncedHistory } from './store/getStore';
 
-render(<Router><Route /></Router>,
+render(
+  <Provider store={ store }>
+    <ConnectedRouter history={ syncedHistory }>
+      <App />
+    </ConnectedRouter>
+  </Provider>,
   document.getElementById('app'));
