@@ -1,0 +1,85 @@
+@import "../../../styles/variables";
+
+@media screen and (max-device-width: 1024px)   and (min-width: 768px) and (min-resolution: 1dppx) {
+  .landing-div {
+    display: inline-block;
+  }
+
+
+.landing-text-in {
+  display: inline-block;
+  padding: 8% 3% 0% 2%;
+  position: relative;
+  left: 5%;
+  }
+}
+
+.landing-picture {
+  padding: 9% 3% 0 3%;
+  display: inherit;
+}
+
+.landing-text {
+  display: inherit;
+  padding: 8% 3% 0% 2%;
+  left: 60%;
+}
+
+.landing-div {
+  display: inline-flex;
+  position: relative;
+  left: 2.5%;
+}
+
+@mixin keyframes($animationName) {
+  @-webkit-keyframes #{$animationName} {
+    @content;
+  }
+  @-moz-keyframes #{$animationName} {
+    @content;
+  }
+  @-o-keyframes #{$animationName} {
+    @content;
+  }
+  @keyframes #{$animationName} {
+    @content;
+  }
+}
+@mixin name($name, $delay, $duration, $fillmode, $direction: forward ) {
+          -webkit-animation-name: $name;
+             -moz-animation-name: $name;
+               -o-animation-name: $name;
+                  animation-name: $name;
+        -webkit-animation-delay: $delay;
+           -moz-animation-delay: $delay;
+             -o-animation-delay: $delay;
+                animation-delay: $delay;
+  -webkit-animation-duration: $duration;
+     -moz-animation-duration: $duration;
+       -o-animation-duration: $duration;
+          animation-duration: $duration;
+ -webkit-animation-fill-mode: $fillmode;
+    -moz-animation-fill-mode: $fillmode;
+      -o-animation-fill-mode: $fillmode;
+         animation-fill-mode: $fillmode;
+  -webkit-animation-direction: $direction;
+     -moz-animation-direction: $direction;
+       -o-animation-direction: $direction;
+          animation-direction: $direction;
+}
+
+@include keyframes(landing-div-animate) {
+  0% {
+    transform: translate3d(0,0,0);
+    }
+
+  100% {
+    transform: translate3d(10%,0,0);
+    }
+}
+
+.landing-div-animate{
+  @include name(landing-div-animate, 0s, 0.5s, forwards);
+  display: inline-flex;
+  position: relative;
+}

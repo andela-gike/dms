@@ -7,20 +7,44 @@ import { Switch, Route, withRouter } from 'react-router-dom';
 import NavHeader from '../common/NavHeader';
 import LandingPage from '../Home/LandingPage';
 import layoutHelper from '../../../utils/layoutHelper';
+import './App.scss';
 
 type Props = {
   isPageLoading: boolean
 };
 
-class App extends React.Component<Props> {
+class App extends React.Component<Props, State> {
+
+  state = {
+    newClass: false
+  };
+
+  onChangeStyle = () => {
+    this.setState(prevState => ({ newClass: !prevState.newClass }));
+  }
   render() {
     const { isPageLoading } = this.props;
     layoutHelper.tooglePageLoader(isPageLoading);
+    const activeClass = [ 'appClass' ];
+    if(this.state.newClass) {
+      activeClass.push('active');
+    }
     return (
-      <Switch>
-        {/* <Route path="/" component={ NavHeader } /> */}
-        <Route exact path="/" component={ LandingPage } />
-      </Switch>
+      <div className={ activeClass.join(' ') } >
+        <NavHeader
+          isPageLoading={ isPageLoading }
+          changeParent={ (newState) => this.onChangeStyle(newState) } />
+        <Switch>
+          <Route
+            exact path="/"
+            render={ props => (
+              <LandingPage
+                { ...props }
+                activeChild={ this.state.newClass } /> ) }
+          />
+        </Switch>
+      </div>
+
     );
   }
 }
