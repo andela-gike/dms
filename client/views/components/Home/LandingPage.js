@@ -8,6 +8,7 @@ import './LandingPage.scss';
 type Props = {
   className: string,
   style: Object,
+  activeChild: boolean
 };
 
 class LandingPage extends PureComponent< Props > {
