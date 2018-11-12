@@ -1,7 +1,8 @@
 // @flow strict
 
 import * as React from 'react';
-import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
+// import PropTypes from 'prop-types';
 import './NavHeader.scss';
 
 type Props = {
@@ -67,6 +68,8 @@ class NavHeader extends React.Component<Props, State> {
           onClick={ this.toggle }>
           <i className="fas fa-align-justify" />
         </button>
+        <Link to="/login">Login</Link>
+        <Link to="/">Logout</Link>
       </div>
     );
   }

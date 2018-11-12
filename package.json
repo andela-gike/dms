@@ -70,6 +70,7 @@
     "nodemon": "^1.17.5",
     "postcss-loader": "^2.1.6",
     "prettier-eslint": "^8.8.2",
+    "react-hot-loader": "^4.3.5",
     "sass-loader": "^7.0.3",
     "style-loader": "^0.21.0",
     "supertest": "^3.1.0",
