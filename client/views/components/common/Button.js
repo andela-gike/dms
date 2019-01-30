@@ -50,18 +50,8 @@ class Button extends PureComponent<Props> {
   };
 
   render() {
-    const {
-      text,
-      loadingText,
-      textStyle,
-      style,
-      className,
-      onClick,
-      isLoading,
-      type,
-      round,
-      disabled
-    } = this.props;
+    const { text, loadingText, textStyle, style, className, onClick, isLoading,
+      type, round, disabled } = this.props;
 
     const isDisabled = isLoading || disabled ? 'disabled' : '';
     const roundBtn = round ? 'button-component--round' : '';

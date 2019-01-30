@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { Link } from 'react-router-dom';
-// import PropTypes from 'prop-types';
+import { func } from 'prop-types';
 import '../../../styles/NavHeader.scss';
 
 type Props = {
@@ -11,6 +11,9 @@ type Props = {
 
 class NavHeader extends React.Component<Props, State> {
   logOut: Function;
+  static defaultProps = {
+    changeParent: () => {},
+  };
     state = {
       addClass: false
     };
@@ -74,5 +77,9 @@ class NavHeader extends React.Component<Props, State> {
     );
   }
 }
+
+NavHeader.propTypes = {
+  changeParent: func,
+};
 
 export default NavHeader;

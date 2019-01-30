@@ -23,8 +23,8 @@ class App extends React.Component<Props, State> {
     this.setState(prevState => ({ newClass: !prevState.newClass }));
   }
   render() {
-    const { isPageLoading } = this.props;
-    layoutHelper.tooglePageLoader(isPageLoading);
+    // const { isPageLoading } = this.props;
+    // layoutHelper.tooglePageLoader(isPageLoading);
     const activeClass = [ 'appClass' ];
     if(this.state.newClass) {
       activeClass.push('active');
@@ -32,7 +32,7 @@ class App extends React.Component<Props, State> {
     return (
       <div className={ activeClass.join(' ') } >
         <NavHeader
-          isPageLoading={ isPageLoading }
+          // isPageLoading={ isPageLoading }
           changeParent={ (newState) => this.onChangeStyle(newState) } />
         <Switch>
           <Route
