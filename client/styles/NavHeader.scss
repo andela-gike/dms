@@ -1,9 +1,9 @@
-@import "../../../styles/variables";
+@import "./variables";
 
 .navHeader {
   background-color: $default-blue;
   width: 4%;
-  height: 100%;
+  height: 105%;
   position: absolute;
   z-index: 1;
   transition: all 0.5s;
@@ -19,7 +19,7 @@
 .navHeader.active{
   background-color: $default-blue;
   width: 10%;
-  height: 100%;
+  height: 105%;
   position: absolute;
   z-index: 1;
   transition: all 0.5s;

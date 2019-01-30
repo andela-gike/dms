@@ -21,12 +21,13 @@ class LandingPage extends PureComponent< Props > {
     const { className, style, activeChild } = this.props;
     const animateDiv = activeChild === true ? '-animate' : '';
     return (
-      <div className={ `landing-div${ animateDiv }` }>
+      <div className="landing-div">
+        <div className={ `landing-div${ animateDiv }` }>nm</div>
         <div className={ `landing-picture ${ className }` } style={ style }>
           <img alt=" " src={ docBot } />
         </div>
         <div className={ `landing-text ${ className }` } style={ style }>
-          <h1>Hello Welcome to my HomePage</h1>
+          <h1>Make Productivity as it should be</h1>
         </div>
       </div>
     );

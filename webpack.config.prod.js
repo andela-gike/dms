@@ -3,7 +3,7 @@ import webpack from 'webpack';
 import UglifyJSPlugin from 'uglifyjs-webpack-plugin';
 
 export default {
-  entry: [ 'babel-polyfill',
+  entry: [ '@babel/polyfill',
     './client/index.js' ],
   output: {
     filename: 'bundle.js',

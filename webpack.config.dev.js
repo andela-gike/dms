@@ -3,7 +3,7 @@ import webpack from 'webpack';
 
 const devtool = 'source-map' || 'cheap-module-source-map' || 'eval-source-map' || 'inline-source-map';
 export default {
-  entry: [ 'babel-polyfill',
+  entry: [ '@babel/polyfill',
     'react-hot-loader/patch',
     './client/index.js' ],
   output: {

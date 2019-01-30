@@ -23,6 +23,7 @@
   display: inherit;
   padding: 8% 3% 0% 2%;
   left: 60%;
+  background-color: #2681AC
 }
 
 .landing-div {
@@ -31,55 +32,39 @@
   left: 2.5%;
 }
 
-@mixin keyframes($animationName) {
-  @-webkit-keyframes #{$animationName} {
-    @content;
-  }
-  @-moz-keyframes #{$animationName} {
-    @content;
-  }
-  @-o-keyframes #{$animationName} {
-    @content;
-  }
-  @keyframes #{$animationName} {
-    @content;
-  }
-}
-@mixin name($name, $delay, $duration, $fillmode, $direction: forward ) {
-          -webkit-animation-name: $name;
-             -moz-animation-name: $name;
-               -o-animation-name: $name;
-                  animation-name: $name;
-        -webkit-animation-delay: $delay;
-           -moz-animation-delay: $delay;
-             -o-animation-delay: $delay;
-                animation-delay: $delay;
-  -webkit-animation-duration: $duration;
-     -moz-animation-duration: $duration;
-       -o-animation-duration: $duration;
-          animation-duration: $duration;
- -webkit-animation-fill-mode: $fillmode;
-    -moz-animation-fill-mode: $fillmode;
-      -o-animation-fill-mode: $fillmode;
-         animation-fill-mode: $fillmode;
-  -webkit-animation-direction: $direction;
-     -moz-animation-direction: $direction;
-       -o-animation-direction: $direction;
-          animation-direction: $direction;
-}
 
-@include keyframes(landing-div-animate) {
-  0% {
-    transform: translate3d(0,0,0);
-    }
-
-  100% {
-    transform: translate3d(10%,0,0);
-    }
-}
-
-.landing-div-animate{
-  @include name(landing-div-animate, 0s, 0.5s, forwards);
+.landing-div-animate {
+	-webkit-animation: landing-div-animate 0.4s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
+          animation: landing-div-animate 0.4s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
   display: inline-flex;
   position: relative;
+}
+
+ @-webkit-keyframes landing-div-animate {
+  0% {
+    -webkit-transform: scaleX(0.4);
+            transform: scaleX(0.4);
+    -webkit-transform-origin: 0% 0%;
+            transform-origin: 0% 0%;
+  }
+  100% {
+    -webkit-transform: scaleX(1);
+            transform: scaleX(1);
+    -webkit-transform-origin: 0% 0%;
+            transform-origin: 0% 0%;
+  }
+}
+@keyframes landing-div-animate {
+  0% {
+    -webkit-transform: scaleX(0.4);
+            transform: scaleX(0.4);
+    -webkit-transform-origin: 0% 0%;
+            transform-origin: 0% 0%;
+  }
+  100% {
+    -webkit-transform: scaleX(1);
+            transform: scaleX(1);
+    -webkit-transform-origin: 0% 0%;
+            transform-origin: 0% 0%;
+  }
 }
