@@ -2,17 +2,19 @@
 .*/node_modules/config-chain/test/broken.json
 [include]
 
+
 [libs]
-flow-typed
+<PROJECT_ROOT>/flow/
 
 [lints]
 
 [options]
+module.name_mapper='.*\.\(s?css\)$' -> '<PROJECT_ROOT>/flow/stub/CSSModule.js.flow'
 esproposal.class_static_fields=enable
 esproposal.class_instance_fields=enable
 
 [strict]
 
 [version]
-0.60.1
+0.79.1
 

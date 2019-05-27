@@ -3,12 +3,18 @@ import webpack from 'webpack';
 
 const devtool = 'source-map' || 'cheap-module-source-map' || 'eval-source-map' || 'inline-source-map';
 export default {
-  entry: [ 'babel-polyfill',
+  entry: [ '@babel/polyfill',
+    'react-hot-loader/patch',
     './client/index.js' ],
   output: {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'client/dist/'),
     publicPath: '/',
+  },
+  loader: {
+    test: /\.js$/,
+    loaders: [ 'react-hot-loader/webpack', 'babel' ],
+    include: path.join(__dirname, 'src')
   },
   mode: 'development',
   devtool: devtool,
