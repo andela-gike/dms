@@ -17,19 +17,23 @@
 .landing-picture {
   padding: 9% 3% 0 3%;
   display: inherit;
+  position: inherit;
+  height: 100%;
+  width: 50%;
 }
 
 .landing-text {
   display: inherit;
-  padding: 8% 3% 0% 2%;
+  padding: 9% 3% 0% 3%;
   left: 60%;
-  background-color: #2681AC
+  background-color: #2681AC;
+  height: 100%;
+  width: 50%;
 }
 
 .landing-div {
-  display: inline-flex;
-  position: relative;
-  left: 2.5%;
+  display: flex;
+  height: 700px;
 }
 
 
@@ -67,4 +71,8 @@
     -webkit-transform-origin: 0% 0%;
             transform-origin: 0% 0%;
   }
+}
+
+.intro-notes {
+  font-size: 4em;
 }
